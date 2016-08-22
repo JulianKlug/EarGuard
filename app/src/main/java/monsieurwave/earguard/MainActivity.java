@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Log.w("MainActivity", "onCreate called");
         addListenerOnButton();
-        toggleButton1.setChecked(false);
+        toggleButton1.setChecked(true);
 
     }
 
