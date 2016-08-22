@@ -10,6 +10,7 @@ import android.util.Log;
 public class Recording extends Thread {
 
     public AudioRecord audioRecord;
+    public Alert alert;
 
     @Override
     public void run() {
@@ -77,8 +78,10 @@ public class Recording extends Thread {
 
                 double dBamplitude = calculatePowerDb(buffer,0,nSamples);
 
-                if (dBamplitude > 85) {
+                if (dBamplitude > -20) {
                     Log.w("Danger !"," Level is over 9000!");
+                    Recording.this.alert = new Alert(Recording.this);
+                    alert.pop();
                 }
 
 //                Log.w("number of samples : ", Integer.toString(nSamples));
@@ -118,13 +121,7 @@ public class Recording extends Thread {
         throw new Exception("No valid sample rate found or no Mic.");
     }
 
-//    public void alert (){
-//        NotificationCompat.Builder mBuilder =
-//                new NotificationCompat.Builder(this)
-////                        .setSmallIcon(R.drawable.notification_icon)
-//                        .setContentTitle("EarGuard")
-//                        .setContentText("Danger!");
-//    }
+
 
 
     /**
