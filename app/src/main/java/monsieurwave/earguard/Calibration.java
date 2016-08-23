@@ -1,5 +1,6 @@
 package monsieurwave.earguard;
 
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -9,14 +10,13 @@ import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.util.Log;
 
-
-public class Recording extends Thread {
+public class Calibration extends Thread {
 
     public AudioRecord audioRecord;
-    public CheckNoiseService context;
+    public CalibrateActivity context;
 
     // Constructor of class (ensures passing on of context from CheckNoiseService to Recording)
-    public Recording(CheckNoiseService ctx) {
+    public Calibration(CalibrateActivity ctx) {
         context = ctx;
     }
 
@@ -46,7 +46,7 @@ public class Recording extends Thread {
         Log.w("Buffersize: ", Integer.toString(buffersizebytes));
 
         //Defining audiorecord
-        Recording.this.audioRecord = new AudioRecord(android.media.MediaRecorder.AudioSource.MIC, frequency,
+        Calibration.this.audioRecord = new AudioRecord(android.media.MediaRecorder.AudioSource.MIC, frequency,
                 channelConfiguration, encoding, buffersizebytes);
 
 //      Create buffer (=array temporaire) to hold audio data
@@ -55,7 +55,7 @@ public class Recording extends Thread {
 
 //        Doing the work
 
-        Recording.this.audioRecord.startRecording();
+        Calibration.this.audioRecord.startRecording();
 
         int count = 0;
 
@@ -134,7 +134,6 @@ public class Recording extends Thread {
     @Override
     public void interrupt() {
         super.interrupt();
-        audioRecord.release();
 
     }
 
@@ -228,3 +227,4 @@ public class Recording extends Thread {
     private static final float FUDGE = 0.6f;
 
 }
+
