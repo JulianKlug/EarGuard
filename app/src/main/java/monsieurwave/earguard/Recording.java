@@ -2,6 +2,8 @@ package monsieurwave.earguard;
 
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.graphics.Color;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
@@ -89,20 +91,31 @@ public class Recording extends Thread {
                     Log.w("Danger !", " Level is over 9000!");
 
 // Create notification
+// Set notification activity when clicked on
+
+                    Intent notificationIntent = new Intent(context, MainActivity.class);
+                    notificationIntent.setAction("android.intent.action.MAIN");
+                    notificationIntent.addCategory("android.intent.category.LAUNCHER");
+                    PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
+                            notificationIntent,
+                            PendingIntent.FLAG_UPDATE_CURRENT |
+                                    Notification.FLAG_AUTO_CANCEL);
+
+// Set notifications behaviours
                     Notification notify = new Notification.Builder(context)
                             .setVibrate(new long[] { 1000, 1000, 1000, 1000, 1000 })
                             .setLights(Color.RED, 3000, 3000)
                             .setContentTitle("EarGuard")
                             .setContentText("Danger ! Noise level is too high!")
                             .setSmallIcon(R.mipmap.ic_launcher)
-                            .setAutoCancel(true).build();
-
+                            .setAutoCancel(true)
+                            .setContentIntent(contentIntent)
+                            .build();
 
                     NotificationManager notificationManager = (NotificationManager)
                             context.getSystemService(context.NOTIFICATION_SERVICE);
 
                     notificationManager.notify(0, notify);
-
 
                 }
 
