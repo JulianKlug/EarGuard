@@ -20,6 +20,8 @@ public class Calibration extends Thread {
         context = ctx;
     }
 
+//    TODO : Write caliration method
+
     @Override
     public void run() {
 
