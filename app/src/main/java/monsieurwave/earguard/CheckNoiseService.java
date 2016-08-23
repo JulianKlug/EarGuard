@@ -10,7 +10,7 @@ import android.util.Log;
 public class CheckNoiseService extends Service {
 
     public Intent intent;
-    public Recording recording = new Recording();
+    public Recording recording = new Recording(this);
 
     public CheckNoiseService() {
     }
