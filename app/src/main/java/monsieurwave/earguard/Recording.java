@@ -1,16 +1,21 @@
 package monsieurwave.earguard;
 
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.util.Log;
 
-/**
- * Created by MonsieurWave on 8/20/2016.
- */
+
 public class Recording extends Thread {
 
     public AudioRecord audioRecord;
-    public Alert alert;
+    public CheckNoiseService context;
+
+    // Constructor of class (ensures passing on of context from CheckNoiseService to Recording)
+    public Recording(CheckNoiseService ctx) {
+        context = ctx;
+    }
 
     @Override
     public void run() {
@@ -76,12 +81,26 @@ public class Recording extends Thread {
                     amplitude = bufferMax;
                 }
 
-                double dBamplitude = calculatePowerDb(buffer,0,nSamples);
+                double dBamplitude = calculatePowerDb(buffer, 0, nSamples);
 
-                if (dBamplitude > -20) {
-                    Log.w("Danger !"," Level is over 9000!");
-                    Recording.this.alert = new Alert(Recording.this);
-                    alert.pop();
+//                Check for too high amplitudes
+                if (dBamplitude > -30) {
+                    Log.w("Danger !", " Level is over 9000!");
+
+// Create notification
+                    Notification notify = new Notification.Builder(context)
+                            .setContentTitle("EarGuard")
+                            .setContentText("Danger ! Noise level is too high!")
+                            .setSmallIcon(R.mipmap.ic_launcher)
+                            .setAutoCancel(true).build();
+//                    notify.defaults |= Notification.DEFAULT_SOUND;
+//                    notify.defaults |= Notification.DEFAULT_VIBRATE;
+                    NotificationManager notificationManager = (NotificationManager)
+                            context.getSystemService(context.NOTIFICATION_SERVICE);
+
+                    notificationManager.notify(0, notify);
+
+
                 }
 
 //                Log.w("number of samples : ", Integer.toString(nSamples));
@@ -122,35 +141,33 @@ public class Recording extends Thread {
     }
 
 
-
-
     /**
      * Calculate the power of the given input signal.
      *
-     * @param   sdata       Buffer containing the input samples to process.
-     * @param   off         Offset in sdata of the data of interest.
-     * @param   samples     Number of data samples to process.
-     * @return              The calculated power in dB relative to the maximum
-     *                      input level; hence 0dB represents maximum power,
-     *                      and minimum power is about -95dB.  Particular
-     *                      cases of interest:
-     *                      <ul>
-     *                      <li>A non-clipping full-range sine wave input is
-     *                          about -2.41dB.
-     *                      <li>Saturated input (heavily clipped) approaches
-     *                          0dB.
-     *                      <li>A low-frequency fully saturated input can
-     *                          get above 0dB, but this would be pretty
-     *                          artificial.
-     *                      <li>A really tiny signal, which only occasionally
-     *                          deviates from zero, can get below -100dB.
-     *                      <li>A completely zero input will produce an
-     *                          output of -Infinity.
-     *                      </ul>
-     *                      <b>You must be prepared to handle this infinite
-     *                      result and results greater than zero,</b> although
-     *                      clipping them off would be quite acceptable in
-     *                      most cases.
+     * @param sdata   Buffer containing the input samples to process.
+     * @param off     Offset in sdata of the data of interest.
+     * @param samples Number of data samples to process.
+     * @return The calculated power in dB relative to the maximum
+     * input level; hence 0dB represents maximum power,
+     * and minimum power is about -95dB.  Particular
+     * cases of interest:
+     * <ul>
+     * <li>A non-clipping full-range sine wave input is
+     * about -2.41dB.
+     * <li>Saturated input (heavily clipped) approaches
+     * 0dB.
+     * <li>A low-frequency fully saturated input can
+     * get above 0dB, but this would be pretty
+     * artificial.
+     * <li>A really tiny signal, which only occasionally
+     * deviates from zero, can get below -100dB.
+     * <li>A completely zero input will produce an
+     * output of -Infinity.
+     * </ul>
+     * <b>You must be prepared to handle this infinite
+     * result and results greater than zero,</b> although
+     * clipping them off would be quite acceptable in
+     * most cases.
      */
 
 
