@@ -11,14 +11,16 @@
 
 
     <ToggleButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="126dp"
+        android:layout_height="83dp"
         android:text="ToggleButton"
         android:id="@+id/toggleButton1"
         android:textOff="@string/toggle_turn_off"
         android:textOn="@string/toggle_turn_on"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/button_small"/>
+
 
     <TextView
         android:layout_width="wrap_content"
