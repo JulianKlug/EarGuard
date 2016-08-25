@@ -57,13 +57,10 @@ public class Recording extends Thread {
 
         Recording.this.audioRecord.startRecording();
 
-        int count = 0;
 
         while (!Thread.currentThread().isInterrupted()) {
 
             try {
-//                Log.w("Recording count :", Integer.toString(count));
-                count += 1;
                 Thread.sleep(1000);
 //
                 double amplitude = 0;

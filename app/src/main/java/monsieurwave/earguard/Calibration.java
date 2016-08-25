@@ -8,12 +8,14 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
+import android.os.Handler;
 import android.util.Log;
 
 public class Calibration extends Thread {
 
     public AudioRecord audioRecord;
     public CalibrateActivity context;
+    public Handler handler;
 
     // Constructor of class (ensures passing on of context from CheckNoiseService to Recording)
     public Calibration(CalibrateActivity ctx) {
@@ -59,14 +61,24 @@ public class Calibration extends Thread {
 
         Calibration.this.audioRecord.startRecording();
 
-        int count = 0;
 
         while (!Thread.currentThread().isInterrupted()) {
 
+//            Setting the timelimit for calibration
+            handler = new Handler();
+
+            final Runnable r = new Runnable() {
+                public void run() {
+                    Calibration.this.interrupt();
+                }
+            };
+
+            handler.postDelayed(r, 1000);
+
+
             try {
-//                Log.w("Recording count :", Integer.toString(count));
-                count += 1;
-                Thread.sleep(1000);
+// Set rate of recordings
+                Thread.sleep(10);
 //
                 double amplitude = 0;
                 double bufferMax = 0;
@@ -136,6 +148,7 @@ public class Calibration extends Thread {
     @Override
     public void interrupt() {
         super.interrupt();
+        audioRecord.release();
 
     }
 
