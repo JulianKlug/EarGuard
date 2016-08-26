@@ -11,6 +11,7 @@ public class CheckNoiseService extends Service {
 
     public Intent intent;
     public Recording recording = new Recording(this);
+    public double zero;
 
     public CheckNoiseService() {
     }
@@ -39,7 +40,9 @@ public class CheckNoiseService extends Service {
     public void onCreate() {
         super.onCreate();
         this.intent = getIntent();
+        this.intent.getDoubleExtra("zero",this.zero);
         Log.w("NoiseCheckService", "onCreate callback called");
+        Log.w("Zero :", Double.toString(zero));
     }
 
     @Override

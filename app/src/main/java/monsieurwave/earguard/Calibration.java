@@ -4,7 +4,9 @@ package monsieurwave.earguard;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
@@ -111,6 +113,15 @@ public class Calibration extends Thread {
         double meanAmp = total/count;
         Log.w("While:","stopped");
         Log.w("meanAmp",Double.toString(meanAmp));
+
+//Save calibrated zero to local
+        SharedPreferences sharedPref = context.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+//        editor.putInt(getString(R.string.saved_high_score), newHighScore);
+        editor.putLong("CalibratedZero", Double.doubleToRawLongBits(meanAmp));
+        editor.commit();
+
+
         audioRecord.release();
         return;
     }

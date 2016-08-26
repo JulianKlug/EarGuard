@@ -1,6 +1,8 @@
 package monsieurwave.earguard;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -17,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
     Calibration calibration = new Calibration(this);
 
     public Intent CheckNoiseServiceIntent;
+    public double zero;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +35,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         Log.w("MainActivity", "onStart called");
+
+        SharedPreferences sharedPref = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
+        double defaultZeroValue = 1;
+        zero = getZero(sharedPref, "CalibratedZero", defaultZeroValue);
+
+//        Log.w("Zero:",Double.toString(zero));
+
     }
 
     public void addListenerOnButton() {
@@ -42,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
         toggleButton1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 MainActivity.this.CheckNoiseServiceIntent = new Intent(MainActivity.this, CheckNoiseService.class);
+                MainActivity.this.CheckNoiseServiceIntent.putExtra("zero", zero);
 
                 if (isChecked) {
                     // The toggle is actually disabled
@@ -59,6 +70,14 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
+
+
+    //    Get calibrated zero from sharedPreferences
+    double getZero(final SharedPreferences prefs, final String key, final double defaultValue) {
+        return Double.longBitsToDouble(prefs.getLong(key, Double.doubleToLongBits(defaultValue)));
+    }
+
 
 //    public void gotoCalib(View view) {
 //        Intent intent = new Intent(MainActivity.this, CalibrateActivity.class);
@@ -79,6 +98,8 @@ public class MainActivity extends AppCompatActivity {
         return;
 
     }
+
+
 
 
 }
