@@ -2,18 +2,25 @@ package monsieurwave.earguard;
 
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import java.util.Arrays;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 
 public class CalibrateActivity extends Activity{
 
     private Button CalibNowButton;
-    public Calibration calibration = new Calibration(this);
+//    Calibration calibration = new Calibration(this);
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,11 +44,20 @@ public class CalibrateActivity extends Activity{
 
     }
 
-    public void calibrate(View view) {
-//        Intent intent = new Intent(CalibrateActivity.this, Calibration.class);
-//        startActivity(intent);
-        this.calibration.start();
-    }
+//    public void calibrate(View view) {
+//
+//        if(!calibration.isAlive()){
+//            calibration = new Calibration(this);
+//            calibration.start();
+//        } else {
+//            calibration.interrupt();
+//            calibration = new Calibration(this);
+//            calibration.start();
+//        }
+//
+//        return;
+//
+//    }
 
 
 }

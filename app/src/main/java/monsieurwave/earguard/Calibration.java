@@ -14,15 +14,15 @@ import android.util.Log;
 public class Calibration extends Thread {
 
     public AudioRecord audioRecord;
-    public CalibrateActivity context;
+    public MainActivity context;
     public Handler handler;
 
     // Constructor of class (ensures passing on of context from CheckNoiseService to Recording)
-    public Calibration(CalibrateActivity ctx) {
+    public Calibration(MainActivity ctx) {
         context = ctx;
     }
 
-//    TODO : Write caliration method
+//    TODO : Write calibration method
 
     @Override
     public void run() {
@@ -56,29 +56,26 @@ public class Calibration extends Thread {
 //      Create buffer (=array temporaire) to hold audio data
         short[] buffer = new short[buffersizebytes];
 
+//        Create array to hold values sampled over calib_dur seconds
+        double total = 0;
+        double count = 0;
+
 
 //        Doing the work
 
         Calibration.this.audioRecord.startRecording();
 
+        //            Setting the timelimit for calibration
+        long calib_dur = 3; // duration of calibration in seconds
+        long start = System.currentTimeMillis();
+        long end = start + calib_dur*1000; // calib_dur seconds * 1000 ms/sec
 
-        while (!Thread.currentThread().isInterrupted()) {
-
-//            Setting the timelimit for calibration
-            handler = new Handler();
-
-            final Runnable r = new Runnable() {
-                public void run() {
-                    Calibration.this.interrupt();
-                }
-            };
-
-            handler.postDelayed(r, 1000);
+        while (!Thread.currentThread().isInterrupted() && System.currentTimeMillis() < end) {
 
 
             try {
 // Set rate of recordings
-                Thread.sleep(10);
+                Thread.sleep(0);
 //
                 double amplitude = 0;
                 double bufferMax = 0;
@@ -99,39 +96,8 @@ public class Calibration extends Thread {
                 }
 
                 double dBamplitude = calculatePowerDb(buffer, 0, nSamples);
-
-//                Check for too high amplitudes
-                if (dBamplitude > -30) {
-                    Log.w("Danger !", " Level is over 9000!");
-
-// Create notification
-// Set notification activity when clicked on
-
-                    Intent notificationIntent = new Intent(context, MainActivity.class);
-                    notificationIntent.setAction("android.intent.action.MAIN");
-                    notificationIntent.addCategory("android.intent.category.LAUNCHER");
-                    PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
-                            notificationIntent,
-                            PendingIntent.FLAG_UPDATE_CURRENT |
-                                    Notification.FLAG_AUTO_CANCEL);
-
-// Set notifications behaviours
-                    Notification notify = new Notification.Builder(context)
-                            .setVibrate(new long[] { 1000, 1000, 1000, 1000, 1000 })
-                            .setLights(Color.RED, 3000, 3000)
-                            .setContentTitle("EarGuard")
-                            .setContentText("Danger ! Noise level is too high!")
-                            .setSmallIcon(R.mipmap.ic_launcher)
-                            .setAutoCancel(true)
-                            .setContentIntent(contentIntent)
-                            .build();
-
-                    NotificationManager notificationManager = (NotificationManager)
-                            context.getSystemService(context.NOTIFICATION_SERVICE);
-
-                    notificationManager.notify(0, notify);
-
-                }
+                total += dBamplitude;
+                count++;
 
 //                Log.w("number of samples : ", Integer.toString(nSamples));
 //                Log.w("AMPLITUDE: ", Double.toString(amplitude));
@@ -142,7 +108,11 @@ public class Calibration extends Thread {
                 break;
             }
         }
+        double meanAmp = total/count;
+        Log.w("While:","stopped");
+        Log.w("meanAmp",Double.toString(meanAmp));
         audioRecord.release();
+        return;
     }
 
     @Override

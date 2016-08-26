@@ -14,6 +14,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ToggleButton toggleButton1;
     private Button calibrationButton;
+    Calibration calibration = new Calibration(this);
 
     public Intent CheckNoiseServiceIntent;
 
@@ -59,9 +60,24 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void gotoCalib(View view) {
-        Intent intent = new Intent(MainActivity.this, CalibrateActivity.class);
-        startActivity(intent);
+//    public void gotoCalib(View view) {
+//        Intent intent = new Intent(MainActivity.this, CalibrateActivity.class);
+//        startActivity(intent);
+//    }
+
+    public void calibrate(View view) {
+
+        if(!calibration.isAlive()){
+            calibration = new Calibration(this);
+            calibration.start();
+        } else {
+            calibration.interrupt();
+            calibration = new Calibration(this);
+            calibration.start();
+        }
+
+        return;
+
     }
 
 
