@@ -86,6 +86,9 @@ public class Recording extends Thread {
 
                 double dBamplitude = calculatePowerDb(buffer, 0, nSamples);
 
+                //TODO : Save data
+
+
 //                Check for too high amplitudes
                 if (dBamplitude > -30) {
                     Log.w("Danger !", " Level is over 9000!");
