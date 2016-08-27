@@ -56,7 +56,6 @@ public class MainActivity extends AppCompatActivity {
                     // The toggle is actually disabled
                     stopService(MainActivity.this.CheckNoiseServiceIntent);
 
-
                 } else {
                     // The toggle is actually enabled
                     startService(CheckNoiseServiceIntent);
