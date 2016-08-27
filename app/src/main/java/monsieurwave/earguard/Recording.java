@@ -87,7 +87,6 @@ public class Recording extends Thread {
 
                 double dBamplitude = calculatePowerDb(buffer, 0, nSamples);
 
-                //TODO : Save data
                 saving = new Saving(dBamplitude, context);
                 this.saving.start();
 
