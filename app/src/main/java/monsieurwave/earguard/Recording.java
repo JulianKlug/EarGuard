@@ -14,6 +14,7 @@ public class Recording extends Thread {
 
     public AudioRecord audioRecord;
     public CheckNoiseService context;
+    public Saving saving;
 
     // Constructor of class (ensures passing on of context from CheckNoiseService to Recording)
     public Recording(CheckNoiseService ctx) {
@@ -85,6 +86,10 @@ public class Recording extends Thread {
                 }
 
                 double dBamplitude = calculatePowerDb(buffer, 0, nSamples);
+
+                saving = new Saving(dBamplitude, context);
+                this.saving.start();
+
 
 //                Check for too high amplitudes
                 if (dBamplitude > -30) {
