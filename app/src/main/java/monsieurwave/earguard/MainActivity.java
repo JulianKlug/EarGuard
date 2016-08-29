@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     public void addListenerOnButton() {
 
         toggleButton1 = (ToggleButton) findViewById(R.id.toggleButton1);
+        toggleButton1.setBackgroundResource(R.drawable.button);
         calibrationButton = (Button) findViewById(R.id.calibActButton);
 
         toggleButton1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
