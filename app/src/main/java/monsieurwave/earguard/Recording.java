@@ -1,3 +1,4 @@
+
 package monsieurwave.earguard;
 
 import android.app.Notification;
@@ -17,6 +18,7 @@ public class Recording extends Thread {
     public AudioRecord audioRecord;
     public CheckNoiseService context;
     public Double zero;
+    public Saving saving;
 
     // Constructor of class (ensures passing on of context from CheckNoiseService to Recording)
     public Recording(CheckNoiseService ctx, Double z) {
@@ -94,6 +96,9 @@ public class Recording extends Thread {
 //                Normalizing to dB
                 double dBamplitude = 20*Math.log10(powerAmplitude/zero);
 //                double dBamplitude = Math.abs(powerAmplitude-zero);
+                
+                saving = new Saving(dBamplitude, context);
+                this.saving.start();
 
 //                Check for too high amplitudes
                 if (dBamplitude > 30) {
