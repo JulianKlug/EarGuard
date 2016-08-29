@@ -3,7 +3,9 @@ package monsieurwave.earguard;
 
 import android.app.Service;
 import android.content.Intent;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.util.Log;
 
 
@@ -12,6 +14,7 @@ public class CheckNoiseService extends Service {
     public Intent intent;
     public Recording recording;
     public double zero;
+    public String currentRec;
 
     public CheckNoiseService() {
     }
@@ -32,6 +35,7 @@ public class CheckNoiseService extends Service {
 //        Get the calibrated zero
         this.zero = intent.getDoubleExtra("zero", 1);
         Log.w("Zero :", Double.toString(zero));
+
 
 //        Start recording thread (Recording class)
         recording = new Recording(this,this.zero);
@@ -59,4 +63,18 @@ public class CheckNoiseService extends Service {
     public Intent getIntent() {
         return intent;
     }
+
+    public Handler mHandler = new Handler() {
+        public void handleMessage(Message msg) {
+            // Act on the message
+            super.handleMessage(msg);
+            CheckNoiseService.this.currentRec = msg.obj.toString();
+            Log.w("CheckNoiseService",CheckNoiseService.this.currentRec);
+
+//            Send data to MainActivity
+            Intent i = new Intent("AMP_UPDATED");
+            i.putExtra("dbAmp",CheckNoiseService.this.currentRec);
+            sendBroadcast(i);
+        }
+    };
 }

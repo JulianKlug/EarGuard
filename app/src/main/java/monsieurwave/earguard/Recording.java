@@ -10,15 +10,23 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
+import android.widget.TextView;
+
 
 
 public class Recording extends Thread {
 
     public AudioRecord audioRecord;
     public CheckNoiseService context;
+    public Handler mHandler;
     public Double zero;
     public Saving saving;
+
+
 
     // Constructor of class (ensures passing on of context from CheckNoiseService to Recording)
     public Recording(CheckNoiseService ctx, Double z) {
@@ -60,7 +68,8 @@ public class Recording extends Thread {
         short[] buffer = new short[buffersizebytes];
 
 
-//        Doing the work
+
+//      //  Doing the work
 
         Recording.this.audioRecord.startRecording();
 
@@ -96,9 +105,16 @@ public class Recording extends Thread {
 //                Normalizing to dB
                 double dBamplitude = 20*Math.log10(powerAmplitude/zero);
 //                double dBamplitude = Math.abs(powerAmplitude-zero);
-                
+
+//                Saving the value
                 saving = new Saving(dBamplitude, context);
                 this.saving.start();
+
+//                Send data to CheckNoiseService
+                Message msg = Message.obtain();
+                String formattedAmp = String.format("%.2f",dBamplitude); // Format to 2 decimal string
+                msg.obj = formattedAmp;
+                context.mHandler.sendMessage(msg);
 
 //                Check for too high amplitudes
                 if (dBamplitude > 30) {
