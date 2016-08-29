@@ -16,10 +16,12 @@ public class Recording extends Thread {
 
     public AudioRecord audioRecord;
     public CheckNoiseService context;
+    public Double zero;
 
     // Constructor of class (ensures passing on of context from CheckNoiseService to Recording)
-    public Recording(CheckNoiseService ctx) {
+    public Recording(CheckNoiseService ctx, Double z) {
         context = ctx;
+        this.zero = z;
     }
 
     @Override
@@ -84,10 +86,17 @@ public class Recording extends Thread {
                     amplitude = bufferMax;
                 }
 
-                double dBamplitude = calculatePowerDb(buffer, 0, nSamples);
+                double powerAmplitude = calculatePowerDb(buffer, 0, nSamples);
+                Log.w("P-Amp: ",Double.toString(powerAmplitude));
+
+//                Log.w("Amp: ", Double.toString(amplitude));
+
+//                Normalizing to dB
+                double dBamplitude = 20*Math.log10(powerAmplitude/zero);
+//                double dBamplitude = Math.abs(powerAmplitude-zero);
 
 //                Check for too high amplitudes
-                if (dBamplitude > -30) {
+                if (dBamplitude > 30) {
                     Log.w("Danger !", " Level is over 9000!");
 
 // Create notification

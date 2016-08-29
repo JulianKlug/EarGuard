@@ -38,9 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferences sharedPref = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
         double defaultZeroValue = 1;
-        zero = getZero(sharedPref, "CalibratedZero", defaultZeroValue);
-
-//        Log.w("Zero:",Double.toString(zero));
+        this.zero = getZero(sharedPref, "CalibratedZero", defaultZeroValue);
 
     }
 
@@ -52,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
         toggleButton1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 MainActivity.this.CheckNoiseServiceIntent = new Intent(MainActivity.this, CheckNoiseService.class);
-                MainActivity.this.CheckNoiseServiceIntent.putExtra("zero", zero);
+                MainActivity.this.CheckNoiseServiceIntent.putExtra("zero", MainActivity.this.zero);
 
                 if (isChecked) {
                     // The toggle is actually disabled
@@ -61,7 +59,10 @@ public class MainActivity extends AppCompatActivity {
 
                 } else {
                     // The toggle is actually enabled
+                    MainActivity.this.CheckNoiseServiceIntent.putExtra("zero", MainActivity.this.zero);
                     startService(CheckNoiseServiceIntent);
+
+
 
                 }
             }
@@ -79,11 +80,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-//    public void gotoCalib(View view) {
-//        Intent intent = new Intent(MainActivity.this, CalibrateActivity.class);
-//        startActivity(intent);
-//    }
-
     public void calibrate(View view) {
 
         if(!calibration.isAlive()){
@@ -94,6 +90,20 @@ public class MainActivity extends AppCompatActivity {
             calibration = new Calibration(this);
             calibration.start();
         }
+
+//        Wait for calibration to end
+        try {
+            calibration.join();
+        } catch (InterruptedException e) {
+            Log.w("Recording : ", e);
+            return;
+        }
+
+
+//       Get new zero into MainActivity.this.zero variable
+        SharedPreferences sharedPref = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
+        double defaultZeroValue = 1;
+        MainActivity.this.zero = getZero(sharedPref, "CalibratedZero", defaultZeroValue);
 
         return;
 
