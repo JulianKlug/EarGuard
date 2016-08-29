@@ -10,7 +10,8 @@ import android.util.Log;
 public class CheckNoiseService extends Service {
 
     public Intent intent;
-    public Recording recording = new Recording();
+    public Recording recording;
+    public double zero;
 
     public CheckNoiseService() {
     }
@@ -28,7 +29,12 @@ public class CheckNoiseService extends Service {
         Log.w("NoiseCheckService", "onStartCommand callback called");
         super.onStartCommand(intent, flags, startId);
 
+//        Get the calibrated zero
+        this.zero = intent.getDoubleExtra("zero", 1);
+        Log.w("Zero :", Double.toString(zero));
+
 //        Start recording thread (Recording class)
+        recording = new Recording(this,this.zero);
         this.recording.start();
 
 //        Return service running method - only stops when stopped by user
@@ -38,8 +44,9 @@ public class CheckNoiseService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        this.intent = getIntent();
+
         Log.w("NoiseCheckService", "onCreate callback called");
+
     }
 
     @Override

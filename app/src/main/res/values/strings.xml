@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">EarGuard</string>
 
+    <string name="calibration">Calibration.</string>
+    <string name="calibrate_now">Calibrate now.</string>
     <string name="toggle_turn_on">Turn On</string>
     <string name="toggle_turn_off">Turn Off</string>
 </resources>
