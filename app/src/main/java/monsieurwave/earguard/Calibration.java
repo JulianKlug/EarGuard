@@ -60,6 +60,7 @@ public class Calibration extends Thread {
 
 //        Create array to hold values sampled over calib_dur seconds
         double total = 0;
+        double powTotal = 0;
         double count = 0;
 
 
@@ -97,13 +98,14 @@ public class Calibration extends Thread {
                     amplitude = bufferMax;
                 }
 
-                double dBamplitude = calculatePowerDb(buffer, 0, nSamples);
-                total += dBamplitude;
+                double powAmplitude = calculatePowerDb(buffer, 0, nSamples);
+                powTotal += powAmplitude;
+                total += amplitude;
                 count++;
 
 //                Log.w("number of samples : ", Integer.toString(nSamples));
 //                Log.w("AMPLITUDE: ", Double.toString(amplitude));
-                Log.w("dB: ", Double.toString(dBamplitude));
+                Log.w("dB: ", Double.toString(powAmplitude));
 //                Log.w("Sum: ", Double.toString(sum));
 
             } catch (InterruptedException e) {
@@ -111,14 +113,16 @@ public class Calibration extends Thread {
             }
         }
         double meanAmp = total/count;
+        double powMeanAmp = powTotal/count;
         Log.w("While:","stopped");
-        Log.w("meanAmp",Double.toString(meanAmp));
+        Log.w("meanAmp",Double.toString(meanAmp) + " " + Double.toString(powMeanAmp));
 
 //Save calibrated zero to local
         SharedPreferences sharedPref = context.getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
 //        editor.putInt(getString(R.string.saved_high_score), newHighScore);
         editor.putLong("CalibratedZero", Double.doubleToRawLongBits(meanAmp));
+        editor.putLong("CalibratedPowZero", Double.doubleToRawLongBits(powMeanAmp));
         editor.commit();
 
 

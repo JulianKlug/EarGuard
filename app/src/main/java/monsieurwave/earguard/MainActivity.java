@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     public Calibration calibration = new Calibration(this);
     public Intent CheckNoiseServiceIntent;
     public double zero;
+    public double powZero;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +56,8 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferences sharedPref = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
         double defaultZeroValue = 1;
-        this.zero = getZero(sharedPref, "CalibratedZero", defaultZeroValue);
+        this.zero = getPref(sharedPref, "CalibratedZero", defaultZeroValue);
+        this.powZero = getPref(sharedPref, "CalibratedPowZero", defaultZeroValue);
 
     }
 
@@ -77,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 MainActivity.this.CheckNoiseServiceIntent = new Intent(MainActivity.this, CheckNoiseService.class);
                 MainActivity.this.CheckNoiseServiceIntent.putExtra("zero", MainActivity.this.zero);
+                MainActivity.this.CheckNoiseServiceIntent.putExtra("powZero", MainActivity.this.powZero);
 
                 if (isChecked) {
                     // The toggle is actually disabled
@@ -87,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     // The toggle is actually enabled
                     MainActivity.this.CheckNoiseServiceIntent.putExtra("zero", MainActivity.this.zero);
+                    MainActivity.this.CheckNoiseServiceIntent.putExtra("powZero", MainActivity.this.powZero);
                     startService(CheckNoiseServiceIntent);
 
                     mainMessage.setVisibility(View.GONE);
@@ -100,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     //    Get calibrated zero from sharedPreferences
-    double getZero(final SharedPreferences prefs, final String key, final double defaultValue) {
+    double getPref(final SharedPreferences prefs, final String key, final double defaultValue) {
         return Double.longBitsToDouble(prefs.getLong(key, Double.doubleToLongBits(defaultValue)));
     }
 
@@ -126,7 +130,8 @@ public class MainActivity extends AppCompatActivity {
 //       Get new zero into MainActivity.this.zero variable
         SharedPreferences sharedPref = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
         double defaultZeroValue = 1;
-        MainActivity.this.zero = getZero(sharedPref, "CalibratedZero", defaultZeroValue);
+        MainActivity.this.zero = getPref(sharedPref, "CalibratedZero", defaultZeroValue);
+        MainActivity.this.powZero = getPref(sharedPref, "CalibratedPowZero", defaultZeroValue);
 
         return;
     }

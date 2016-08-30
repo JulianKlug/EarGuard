@@ -4,34 +4,29 @@ package monsieurwave.earguard;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
-import android.widget.TextView;
-
 
 
 public class Recording extends Thread {
 
     public AudioRecord audioRecord;
     public CheckNoiseService context;
-    public Handler mHandler;
     public Double zero;
+    public Double powZero;
     public Saving saving;
 
 
-
     // Constructor of class (ensures passing on of context from CheckNoiseService to Recording)
-    public Recording(CheckNoiseService ctx, Double z) {
+    public Recording(CheckNoiseService ctx, Double z, Double pz) {
         context = ctx;
         this.zero = z;
+        this.powZero = pz;
     }
 
     @Override
@@ -64,8 +59,12 @@ public class Recording extends Thread {
         Recording.this.audioRecord = new AudioRecord(android.media.MediaRecorder.AudioSource.MIC, frequency,
                 channelConfiguration, encoding, buffersizebytes);
 
+//        Get number of channels
+        int numChannels = Recording.this.audioRecord.getChannelCount();
+
 //      Create buffer (=array temporaire) to hold audio data
         short[] buffer = new short[buffersizebytes];
+
 
 
 
@@ -100,11 +99,17 @@ public class Recording extends Thread {
                 double powerAmplitude = calculatePowerDb(buffer, 0, nSamples);
                 Log.w("P-Amp: ",Double.toString(powerAmplitude));
 
-//                Log.w("Amp: ", Double.toString(amplitude));
+                Log.w("Amp: ", Double.toString(amplitude));
 
 //                Normalizing to dB
-                double dBamplitude = 20*Math.log10(powerAmplitude/zero);
-//                double dBamplitude = Math.abs(powerAmplitude-zero);
+
+//                If dBZero was measured with reference
+//                double dBZero = 30;
+//                double dBamplitude  = 20*Math.log10(amplitude/zero) + dBZero;
+
+//                If dBZero was not measured with a reference
+                double dBamplitude = Math.abs(powerAmplitude-powZero);
+
 
 //                Saving the value
                 saving = new Saving(dBamplitude, context);
@@ -259,3 +264,4 @@ public class Recording extends Thread {
     private static final float FUDGE = 0.6f;
 
 }
+
