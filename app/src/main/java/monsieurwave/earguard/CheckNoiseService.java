@@ -14,6 +14,7 @@ public class CheckNoiseService extends Service {
     public Intent intent;
     public Recording recording;
     public double zero;
+    public double powZero;
     public String currentRec;
 
     public CheckNoiseService() {
@@ -34,11 +35,13 @@ public class CheckNoiseService extends Service {
 
 //        Get the calibrated zero
         this.zero = intent.getDoubleExtra("zero", 1);
+        this.powZero = intent.getDoubleExtra("powZero", 0);
         Log.w("Zero :", Double.toString(zero));
+        Log.w("PowZero :", Double.toString(powZero));
 
 
 //        Start recording thread (Recording class)
-        recording = new Recording(this,this.zero);
+        recording = new Recording(this,this.zero,this.powZero);
         this.recording.start();
 
 //        Return service running method - only stops when stopped by user
