@@ -60,7 +60,15 @@ public class CheckNoiseService extends Service {
     public void onDestroy() {
         super.onDestroy();
         Log.w("NoiseCheckService", "onDestroy callback called");
+        recording.audioRecord.release();
         recording.interrupt();
+        //        Wait for recording to end
+        try {
+            recording.join();
+        } catch (InterruptedException e) {
+            Log.w("Recording : ", e);
+            return;
+        }
     }
 
     public Intent getIntent() {

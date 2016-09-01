@@ -1,5 +1,6 @@
 package monsieurwave.earguard;
 
+import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -27,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     public Intent CheckNoiseServiceIntent;
     public double zero;
     public double powZero;
+    public boolean recRunning;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +87,8 @@ public class MainActivity extends AppCompatActivity {
                     // The toggle is actually disabled
                     stopService(MainActivity.this.CheckNoiseServiceIntent);
 
+                    recRunning = false;
+
                     mainMessage.setVisibility(View.VISIBLE);
 
                 } else {
@@ -92,6 +96,8 @@ public class MainActivity extends AppCompatActivity {
                     MainActivity.this.CheckNoiseServiceIntent.putExtra("zero", MainActivity.this.zero);
                     MainActivity.this.CheckNoiseServiceIntent.putExtra("powZero", MainActivity.this.powZero);
                     startService(CheckNoiseServiceIntent);
+
+                    recRunning = true;
 
                     mainMessage.setVisibility(View.GONE);
                 }
@@ -110,29 +116,43 @@ public class MainActivity extends AppCompatActivity {
 
     public void calibrate(View view) {
 
-        if(!calibration.isAlive()){
-            calibration = new Calibration(this);
-            calibration.start();
-        } else {
-            calibration.interrupt();
-            calibration = new Calibration(this);
-            calibration.start();
-        }
+//        Check if still recording
+
+//        if(recRunning) {
+//            stopService(MainActivity.this.CheckNoiseServiceIntent);
+//            recRunning = false;
+//
+//            mainMessage = (TextView) findViewById(R.id.mainMessage);
+//            mainMessage.setVisibility(View.VISIBLE);
+//        }
+
+        if(!recRunning) {
+
+
+            if (!calibration.isAlive()) {
+                calibration = new Calibration(this);
+                calibration.start();
+            } else {
+                calibration.interrupt();
+                calibration = new Calibration(this);
+                calibration.start();
+            }
 
 //        Wait for calibration to end
-        try {
-            calibration.join();
-        } catch (InterruptedException e) {
-            Log.w("Recording : ", e);
-            return;
-        }
+            try {
+                calibration.join();
+            } catch (InterruptedException e) {
+                Log.w("Recording : ", e);
+                return;
+            }
 
 //       Get new zero into MainActivity.this.zero variable
-        SharedPreferences sharedPref = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
-        double defaultZeroValue = 1;
-        MainActivity.this.zero = getPref(sharedPref, "CalibratedZero", defaultZeroValue);
-        MainActivity.this.powZero = getPref(sharedPref, "CalibratedPowZero", defaultZeroValue);
+            SharedPreferences sharedPref = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
+            double defaultZeroValue = 1;
+            MainActivity.this.zero = getPref(sharedPref, "CalibratedZero", defaultZeroValue);
+            MainActivity.this.powZero = getPref(sharedPref, "CalibratedPowZero", defaultZeroValue);
 
+        };
         return;
     }
 
@@ -148,6 +168,7 @@ public class MainActivity extends AppCompatActivity {
             instantExposure.setText(outputString);
         }
     };
+
 
 
 } // End of MainActivity
