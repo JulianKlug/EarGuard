@@ -114,6 +114,11 @@ public class MainActivity extends AppCompatActivity {
         return Double.longBitsToDouble(prefs.getLong(key, Double.doubleToLongBits(defaultValue)));
     }
 
+    public void accessSettings(View view){
+        Intent SettingsActivityIntent = new Intent(MainActivity.this, SettingsActivity.class);
+        startActivity(SettingsActivityIntent);
+    }
+
     public void calibrate(View view) {
 
 //        Check if still recording
