@@ -116,37 +116,20 @@ public class MainActivity extends AppCompatActivity {
 
     public void calibrate(View view) {
 
-//        Check if still recording, if recording stop
-        if(!recRunning) {
+//        Check if still recording
 
-
-
-//            Thread stop = new Thread() {
-//                public void run() {
-//                    stopService(MainActivity.this.CheckNoiseServiceIntent);
-//                    recRunning = false;
-//
-//                    Log.w("Service", "stopped");
-//                }
-//            };
-//
-//            stop.start();
-//
-//            stop.interrupt();
-//
-//            try {
-//                stop.join();
-//            } catch (InterruptedException e) {
-//                Log.w("Recording : ", e);
-//                return;
-//            }
+//        if(recRunning) {
+//            stopService(MainActivity.this.CheckNoiseServiceIntent);
+//            recRunning = false;
 //
 //            mainMessage = (TextView) findViewById(R.id.mainMessage);
 //            mainMessage.setVisibility(View.VISIBLE);
 //        }
 
+        if(!recRunning) {
 
-            if(!calibration.isAlive()){
+
+            if (!calibration.isAlive()) {
                 calibration = new Calibration(this);
                 calibration.start();
             } else {
@@ -169,9 +152,8 @@ public class MainActivity extends AppCompatActivity {
             MainActivity.this.zero = getPref(sharedPref, "CalibratedZero", defaultZeroValue);
             MainActivity.this.powZero = getPref(sharedPref, "CalibratedPowZero", defaultZeroValue);
 
-        }
+        };
         return;
-
     }
 
 //Get Data from CheckNoiseService
