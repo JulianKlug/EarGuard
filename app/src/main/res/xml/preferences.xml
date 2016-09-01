@@ -10,4 +10,9 @@
             android:summary="Please provide your username"></EditTextPreference>
     </PreferenceScreen>
 
+    <CheckBoxPreference android:title="Warn Workgroup by WhatsApp"
+        android:defaultValue="false"
+        android:summary="This option if selected will allow the application to warn the members of your workgroup when noise level exceeds dangerous levels."
+        android:key="whatsappWarning" />
+
 </PreferenceScreen>
