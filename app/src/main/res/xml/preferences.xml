@@ -18,10 +18,6 @@
             android:defaultValue="false"
             android:summary="This option if selected will allow the application to warn the members of your workgroup when noise level exceeds dangerous levels."
             android:key="whatsappWarning" />
-        <CheckBoxPreference android:title="Warn Workgroup by Facebook Messenger"
-            android:defaultValue="false"
-            android:summary="This option if selected will allow the application to warn the members of your workgroup by Facebook Messenger when noise level exceeds dangerous levels."
-            android:key="fbWarning" />
     </PreferenceScreen>
 
 </PreferenceScreen>

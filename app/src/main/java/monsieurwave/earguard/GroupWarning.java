@@ -5,11 +5,8 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.support.v4.util.LogWriter;
 import android.util.Log;
-import android.view.View;
 
-/**
- * Created by julian on 9/6/16.
- */
+
 public class GroupWarning {
 
     public CheckNoiseService context;
@@ -17,6 +14,7 @@ public class GroupWarning {
     public GroupWarning (CheckNoiseService ctx) {
         context = ctx;
     }
+
 
     public void whatsApp() {
 
@@ -44,8 +42,5 @@ public class GroupWarning {
 
     }
 
-    public void fbMessenger() {
-
-    }
 
 }
