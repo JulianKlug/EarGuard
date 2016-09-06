@@ -5,11 +5,13 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 
@@ -20,6 +22,7 @@ public class Recording extends Thread {
     public Double zero;
     public Double powZero;
     public Saving saving;
+    public GroupWarning grWarning;
 
 
     // Constructor of class (ensures passing on of context from CheckNoiseService to Recording)
@@ -32,7 +35,11 @@ public class Recording extends Thread {
     @Override
     public void run() {
 
-//        Setting variables
+//        Setting up warning
+        grWarning =  new GroupWarning(context);
+
+
+//        Setting recording variables
 
 //        Setting audio channels
         int channelConfiguration = AudioFormat.CHANNEL_IN_MONO;
@@ -125,32 +132,8 @@ public class Recording extends Thread {
                 if (dBamplitude > 30) {
                     Log.w("Danger !", " Level is over 9000!");
 
-// Create notification
-// Set notification activity when clicked on
-
-                    Intent notificationIntent = new Intent(context, MainActivity.class);
-                    notificationIntent.setAction("android.intent.action.MAIN");
-                    notificationIntent.addCategory("android.intent.category.LAUNCHER");
-                    PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
-                            notificationIntent,
-                            PendingIntent.FLAG_UPDATE_CURRENT |
-                                    Notification.FLAG_AUTO_CANCEL);
-
-// Set notifications behaviours
-                    Notification notify = new Notification.Builder(context)
-                            .setVibrate(new long[] { 1000, 1000, 1000, 1000, 1000 })
-                            .setLights(Color.RED, 3000, 3000)
-                            .setContentTitle("EarGuard")
-                            .setContentText("Danger ! Noise level is too high!")
-                            .setSmallIcon(R.mipmap.ic_launcher)
-                            .setAutoCancel(true)
-                            .setContentIntent(contentIntent)
-                            .build();
-
-                    NotificationManager notificationManager = (NotificationManager)
-                            context.getSystemService(context.NOTIFICATION_SERVICE);
-
-                    notificationManager.notify(0, notify);
+                    notifyUser();
+                    notifyGroup();
 
                 }
 
@@ -171,6 +154,45 @@ public class Recording extends Thread {
         super.interrupt();
         audioRecord.release();
 
+    }
+
+    public void notifyUser() {
+
+// Create notification
+// Set notification activity when clicked on
+
+        Intent notificationIntent = new Intent(context, MainActivity.class);
+        notificationIntent.setAction("android.intent.action.MAIN");
+        notificationIntent.addCategory("android.intent.category.LAUNCHER");
+        PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
+                notificationIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+// Set notifications behaviours
+        Notification notify = new Notification.Builder(context)
+                .setVibrate(new long[] { 1000, 1000, 1000, 1000, 1000 })
+                .setLights(Color.RED, 3000, 3000)
+                .setContentTitle("EarGuard")
+                .setContentText("Danger ! Noise level is too high!")
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setAutoCancel(true)
+                .setContentIntent(contentIntent)
+                .build();
+
+        NotificationManager notificationManager = (NotificationManager)
+                context.getSystemService(context.NOTIFICATION_SERVICE);
+
+        notificationManager.notify(0, notify);
+
+    }
+
+    public void notifyGroup(){
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean useWA = preferences.getBoolean("whatsappWarning", false);
+
+        if (useWA) {
+            grWarning.whatsApp();
+        }
     }
 
 
