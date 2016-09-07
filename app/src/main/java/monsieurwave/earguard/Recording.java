@@ -129,7 +129,7 @@ public class Recording extends Thread {
                 context.mHandler.sendMessage(msg);
 
 //                Check for too high amplitudes
-                if (dBamplitude > 30) {
+                if (dBamplitude > 10) {
                     Log.w("Danger !", " Level is over 9000!");
 
                     notifyUser();
