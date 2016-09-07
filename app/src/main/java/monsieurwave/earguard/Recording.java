@@ -14,6 +14,8 @@ import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import java.math.BigDecimal;
+
 
 public class Recording extends Thread {
 
@@ -79,43 +81,78 @@ public class Recording extends Thread {
 
         Recording.this.audioRecord.startRecording();
 
+        double splValue = 0.0;
+        double rmsValue = 0.0;
+        final double P0 = 0.000002;
+        final int CALIB_DEFAULT = -90;
+        int mCaliberationValue = CALIB_DEFAULT;
+        double mMaxValue = 0.0;
+
 
         while (!Thread.currentThread().isInterrupted()) {
 
             try {
                 Thread.sleep(1000);
-//
-                double amplitude = 0;
-                double bufferMax = 0;
 
-//                Read audioRecord dans buffer
-//                And register number of values read to buffer into nSamples
-                int nSamples = audioRecord.read(buffer, 0, buffersizebytes);
-                double sum = 0;
 
-//                Loop through the buffer
-                for (int i = 0; i < nSamples; i++) {
-                    final double absbuf = Math.abs(buffer[i]);
-                    if (absbuf > bufferMax) {
-                        bufferMax = absbuf;
-                        sum += absbuf;
-                    }
-                    amplitude = bufferMax;
+                // creating these variables here so that
+                // the mode change can be handled
+                int SIZE = buffersizebytes;
+                short[] tempBuffer = new short[SIZE];
+
+                audioRecord.read(tempBuffer, 0, SIZE);
+
+
+                for (int i = 0; i < SIZE - 1; i++) {
+                    rmsValue += tempBuffer[i] * tempBuffer[i];
+                }
+                rmsValue = rmsValue / SIZE;
+                rmsValue = Math.sqrt(rmsValue);
+
+                splValue = 20 * Math.log10(rmsValue / P0);
+                splValue = splValue + mCaliberationValue;
+                splValue = round(splValue, 2);
+
+                if (mMaxValue < splValue) {
+                    mMaxValue = splValue;
                 }
 
-                double powerAmplitude = calculatePowerDb(buffer, 0, nSamples);
-                Log.w("P-Amp: ",Double.toString(powerAmplitude));
+                double dBamplitude = splValue;
 
-                Log.w("Amp: ", Double.toString(amplitude));
-
-//                Normalizing to dB
-
-//                If dBZero was measured with reference
-//                double dBZero = 30;
-//                double dBamplitude  = 20*Math.log10(amplitude/zero) + dBZero;
-
-//                If dBZero was not measured with a reference
-                double dBamplitude = Math.abs(powerAmplitude-powZero);
+                Log.w("splValue",Double.toString(splValue));
+                Log.w("mMaxValue",Double.toString(mMaxValue));
+//
+//                double amplitude = 0;
+//                double bufferMax = 0;
+//
+////                Read audioRecord dans buffer
+////                And register number of values read to buffer into nSamples
+//                int nSamples = audioRecord.read(buffer, 0, buffersizebytes);
+//                double sum = 0;
+//
+////                Loop through the buffer
+//                for (int i = 0; i < nSamples; i++) {
+//                    final double absbuf = Math.abs(buffer[i]);
+//                    if (absbuf > bufferMax) {
+//                        bufferMax = absbuf;
+//                        sum += absbuf;
+//                    }
+//                    amplitude = bufferMax;
+//                }
+//
+//                double powerAmplitude = calculatePowerDb(buffer, 0, nSamples);
+//                Log.w("P-Amp: ",Double.toString(powerAmplitude));
+//
+//                Log.w("Amp: ", Double.toString(amplitude));
+//
+////                Normalizing to dB
+//
+////                If dBZero was measured with reference
+////                double dBZero = 30;
+////                double dBamplitude  = 20*Math.log10(amplitude/zero) + dBZero;
+//
+////                If dBZero was not measured with a reference
+//                double dBamplitude = Math.abs(powerAmplitude-powZero);
 
 
 //                Saving the value
@@ -139,7 +176,7 @@ public class Recording extends Thread {
 
 //                Log.w("number of samples : ", Integer.toString(nSamples));
 //                Log.w("AMPLITUDE: ", Double.toString(amplitude));
-                Log.w("dB: ", Double.toString(dBamplitude));
+//                Log.w("dB: ", Double.toString(dBamplitude));
 //                Log.w("Sum: ", Double.toString(sum));
 
             } catch (InterruptedException e) {
@@ -193,6 +230,17 @@ public class Recording extends Thread {
         if (useWA) {
             grWarning.whatsApp();
         }
+    }
+
+    /**
+     * Utility function for rounding decimal values
+     */
+    public double round(double d, int decimalPlace) {
+        // see the Javadoc about why we use a String in the constructor
+        // http://java.sun.com/j2se/1.5.0/docs/api/java/math/BigDecimal.html#BigDecimal(double)
+        BigDecimal bd = new BigDecimal(Double.toString(d));
+        bd = bd.setScale(decimalPlace, BigDecimal.ROUND_HALF_UP);
+        return bd.doubleValue();
     }
 
 
