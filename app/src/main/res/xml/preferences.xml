@@ -20,4 +20,11 @@
             android:key="whatsappWarning" />
     </PreferenceScreen>
 
+    <ListPreference
+        android:key="calibration_method"
+        android:title="Calibration Method"
+        android:summary="Specify calibration method."
+        android:entries="@array/listentries"
+        android:entryValues="@array/listvalues" />
+
 </PreferenceScreen>

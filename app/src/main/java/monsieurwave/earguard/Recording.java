@@ -23,6 +23,7 @@ public class Recording extends Thread {
     public CheckNoiseService context;
     public Double zero;
     public Double powZero;
+    public Double calibPref;
     public Saving saving;
     public GroupWarning grWarning;
 
@@ -32,6 +33,7 @@ public class Recording extends Thread {
         context = ctx;
         this.zero = z;
         this.powZero = pz;
+//        this.calibPref = cal;
     }
 
     @Override
@@ -75,18 +77,20 @@ public class Recording extends Thread {
         short[] buffer = new short[buffersizebytes];
 
 
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String calibPref = preferences.getString("calibration_method", "1");
+
+        double splValue = 0.0;
+        double rmsValue = 0.0;
+        final double P0 = 0.000002;
+        final int CALIB_DEFAULT = -105;
+        int mCaliberationValue = CALIB_DEFAULT;
+        double mMaxValue = 0.0;
 
 
 //      //  Doing the work
 
         Recording.this.audioRecord.startRecording();
-
-        double splValue = 0.0;
-        double rmsValue = 0.0;
-        final double P0 = 0.000002;
-        final int CALIB_DEFAULT = -90;
-        int mCaliberationValue = CALIB_DEFAULT;
-        double mMaxValue = 0.0;
 
 
         while (!Thread.currentThread().isInterrupted()) {
@@ -94,66 +98,71 @@ public class Recording extends Thread {
             try {
                 Thread.sleep(1000);
 
+                Double dBamplitude;
 
-                // creating these variables here so that
-                // the mode change can be handled
-                int SIZE = buffersizebytes;
-                short[] tempBuffer = new short[SIZE];
+                if (calibPref.equals("1") ) {
 
-                audioRecord.read(tempBuffer, 0, SIZE);
+                    // creating these variables here so that
+                    // the mode change can be handled
+                    int SIZE = buffersizebytes;
+                    short[] tempBuffer = new short[SIZE];
+
+                    audioRecord.read(tempBuffer, 0, SIZE);
 
 
-                for (int i = 0; i < SIZE - 1; i++) {
-                    rmsValue += tempBuffer[i] * tempBuffer[i];
+                    for (int i = 0; i < SIZE - 1; i++) {
+                        rmsValue += tempBuffer[i] * tempBuffer[i];
+                    }
+                    rmsValue = rmsValue / SIZE;
+                    rmsValue = Math.sqrt(rmsValue);
+
+                    splValue = 20 * Math.log10(rmsValue / P0);
+                    splValue = splValue + mCaliberationValue;
+                    splValue = round(splValue, 2);
+
+                    if (mMaxValue < splValue) {
+                        mMaxValue = splValue;
+                    }
+
+                    dBamplitude = splValue;
+
+                    Log.w("splValue", Double.toString(splValue));
+                    Log.w("mMaxValue", Double.toString(mMaxValue));
+
+                } else {
+//
+                    double amplitude = 0;
+                    double bufferMax = 0;
+
+//                Read audioRecord dans buffer
+//                And register number of values read to buffer into nSamples
+                    int nSamples = audioRecord.read(buffer, 0, buffersizebytes);
+                    double sum = 0;
+
+//                Loop through the buffer
+                    for (int i = 0; i < nSamples; i++) {
+                        final double absbuf = Math.abs(buffer[i]);
+                        if (absbuf > bufferMax) {
+                            bufferMax = absbuf;
+                            sum += absbuf;
+                        }
+                        amplitude = bufferMax;
+                    }
+
+                    double powerAmplitude = calculatePowerDb(buffer, 0, nSamples);
+                    Log.w("P-Amp: ", Double.toString(powerAmplitude));
+
+                    Log.w("Amp: ", Double.toString(amplitude));
+
+//                Normalizing to dB
+
+//                If dBZero was measured with reference
+//                double dBZero = 30;
+//                double dBamplitude  = 20*Math.log10(amplitude/zero) + dBZero;
+
+//                If dBZero was not measured with a reference
+                    dBamplitude = Math.abs(powerAmplitude - powZero);
                 }
-                rmsValue = rmsValue / SIZE;
-                rmsValue = Math.sqrt(rmsValue);
-
-                splValue = 20 * Math.log10(rmsValue / P0);
-                splValue = splValue + mCaliberationValue;
-                splValue = round(splValue, 2);
-
-                if (mMaxValue < splValue) {
-                    mMaxValue = splValue;
-                }
-
-                double dBamplitude = splValue;
-
-                Log.w("splValue",Double.toString(splValue));
-                Log.w("mMaxValue",Double.toString(mMaxValue));
-//
-//                double amplitude = 0;
-//                double bufferMax = 0;
-//
-////                Read audioRecord dans buffer
-////                And register number of values read to buffer into nSamples
-//                int nSamples = audioRecord.read(buffer, 0, buffersizebytes);
-//                double sum = 0;
-//
-////                Loop through the buffer
-//                for (int i = 0; i < nSamples; i++) {
-//                    final double absbuf = Math.abs(buffer[i]);
-//                    if (absbuf > bufferMax) {
-//                        bufferMax = absbuf;
-//                        sum += absbuf;
-//                    }
-//                    amplitude = bufferMax;
-//                }
-//
-//                double powerAmplitude = calculatePowerDb(buffer, 0, nSamples);
-//                Log.w("P-Amp: ",Double.toString(powerAmplitude));
-//
-//                Log.w("Amp: ", Double.toString(amplitude));
-//
-////                Normalizing to dB
-//
-////                If dBZero was measured with reference
-////                double dBZero = 30;
-////                double dBamplitude  = 20*Math.log10(amplitude/zero) + dBZero;
-//
-////                If dBZero was not measured with a reference
-//                double dBamplitude = Math.abs(powerAmplitude-powZero);
-
 
 //                Saving the value
                 saving = new Saving(dBamplitude, context);

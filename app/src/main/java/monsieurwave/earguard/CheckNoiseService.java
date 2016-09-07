@@ -2,7 +2,9 @@ package monsieurwave.earguard;
 
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -73,6 +75,11 @@ public class CheckNoiseService extends Service {
 
     public Intent getIntent() {
         return intent;
+    }
+
+    //    Get calibrated zero from sharedPreferences
+    double getPref(final SharedPreferences prefs, final String key, final double defaultValue) {
+        return Double.longBitsToDouble(prefs.getLong(key, Double.doubleToLongBits(defaultValue)));
     }
 
     public Handler mHandler = new Handler() {
