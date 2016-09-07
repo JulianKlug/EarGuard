@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">EarGuard</string>
+    
+    <string name="facebook_app_id">1209923379028001</string>
 
     <string name="calibration">Calibration.</string>
 
@@ -8,4 +10,8 @@
 
     <string name="settings">Settings.</string>
     <string name="user_details">User Details</string>
+    <string name="workgroup">Workgroup</string>
+
+    <string name="GroupWarning">Danger ! Noise level is too high!</string>
+
 </resources>
