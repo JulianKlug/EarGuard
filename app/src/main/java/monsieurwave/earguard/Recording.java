@@ -23,7 +23,6 @@ public class Recording extends Thread {
     public CheckNoiseService context;
     public Double zero;
     public Double powZero;
-    public Double calibPref;
     public Saving saving;
     public GroupWarning grWarning;
 
@@ -33,7 +32,6 @@ public class Recording extends Thread {
         context = ctx;
         this.zero = z;
         this.powZero = pz;
-//        this.calibPref = cal;
     }
 
     @Override
@@ -177,8 +175,10 @@ public class Recording extends Thread {
 //                Check for too high amplitudes
                 if (dBamplitude > 10) {
                     Log.w("Danger !", " Level is over 9000!");
-
-                    notifyUser();
+                    boolean notifyMe = preferences.getBoolean("userWarning", false);
+                    if (notifyMe) {
+                        notifyUser();
+                    }
                     notifyGroup();
 
                 }
