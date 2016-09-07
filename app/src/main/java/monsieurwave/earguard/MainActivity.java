@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     public Intent CheckNoiseServiceIntent;
     public double zero;
     public double powZero;
+//    public String calibPref;
     public boolean recRunning;
 
     @Override
@@ -58,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
         double defaultZeroValue = 1;
         this.zero = getPref(sharedPref, "CalibratedZero", defaultZeroValue);
         this.powZero = getPref(sharedPref, "CalibratedPowZero", defaultZeroValue);
-
     }
 
     @Override
@@ -113,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void accessSettings(View view){
+
         Intent SettingsActivityIntent = new Intent(MainActivity.this, SettingsActivity.class);
         startActivity(SettingsActivityIntent);
     }
