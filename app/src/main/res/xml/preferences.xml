@@ -10,6 +10,11 @@
             android:summary="Please provide your username"></EditTextPreference>
     </PreferenceScreen>
 
+    <CheckBoxPreference android:title="Warn me if Noise level is too high."
+        android:defaultValue="false"
+        android:summary="This option if selected will allow the application to warn you when noise level exceeds dangerous levels."
+        android:key="userWarning" />
+
     <PreferenceScreen
         android:key="button_workgroup_category_key"
         android:title="@string/workgroup"
