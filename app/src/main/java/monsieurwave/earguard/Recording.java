@@ -160,6 +160,7 @@ public class Recording extends Thread {
 
 //                If dBZero was not measured with a reference
                     dBamplitude = Math.abs(powerAmplitude - powZero);
+                    dBamplitude = amplitude;
                 }
 
 //                Saving the value
