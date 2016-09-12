@@ -147,6 +147,21 @@ public class Recording extends Thread {
                         amplitude = bufferMax;
                     }
 
+                if (calibPref.equals("3")) {
+//              Fit1 log
+                    dBamplitude = -93.14 + 24.02*Math.log(amplitude);
+
+                } else if(calibPref.equals("4")) {
+//               Fit2 trigo-log
+                    double a = -9.197;
+                    double b = -0.8016;
+                    double c = 73.32;
+                    double x = Math.log(amplitude);
+                    dBamplitude = a*(Math.sin(x-Math.PI))+b*Math.pow((x-10),2)+c*(1);
+
+                } else {
+
+
                     double powerAmplitude = calculatePowerDb(buffer, 0, nSamples);
                     Log.w("P-Amp: ", Double.toString(powerAmplitude));
 
@@ -160,6 +175,7 @@ public class Recording extends Thread {
 
 //                If dBZero was not measured with a reference
                     dBamplitude = Math.abs(powerAmplitude - powZero);
+                }
                 }
 
 //                Saving the value
