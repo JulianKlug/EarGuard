@@ -4,12 +4,16 @@
     <string-array name="listentries">
         <item>Manual calibration</item>
         <item>Automatic calibration</item>
+        <item>Experimental Log-fit</item>
+        <item>Experimental trigo-log-fit</item>
 
     </string-array>
 
     <string-array name="listvalues">
         <item>1</item>
         <item>2</item>
+        <item>3</item>
+        <item>4</item>
 
     </string-array>
 
