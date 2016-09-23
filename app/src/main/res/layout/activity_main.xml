@@ -32,19 +32,6 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="84dp" />
 
-    <Button
-        android:id="@+id/calibActButton"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:text="@string/calibration"
-        android:onClick="calibrate"
-        android:background="@color/translucent"
-        android:clickable="true"
-        android:paddingLeft="15dp"
-        android:textColor="#c5f6f7"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
 
     <Button
         android:id="@+id/settingsButton"

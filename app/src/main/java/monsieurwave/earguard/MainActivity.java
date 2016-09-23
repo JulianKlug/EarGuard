@@ -20,11 +20,9 @@ import android.widget.ToggleButton;
 public class MainActivity extends AppCompatActivity {
 
     private ToggleButton toggleButton1;
-    private Button calibrationButton;
     private TextView mainMessage;
     private TextView instantExposure;
 
-    public Calibration calibration = new Calibration(this);
     public Intent CheckNoiseServiceIntent;
     public double zero;
     public double powZero;
@@ -73,7 +71,6 @@ public class MainActivity extends AppCompatActivity {
 
         toggleButton1 = (ToggleButton) findViewById(R.id.toggleButton1);
         toggleButton1.setBackgroundResource(R.drawable.button);
-        calibrationButton = (Button) findViewById(R.id.calibActButton);
         mainMessage = (TextView) findViewById(R.id.mainMessage);
 
         toggleButton1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -83,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
 
 //                    Check if noise threshold is valid
                 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+
                 try {
 
                     double threshold = new Double(preferences.getString("dBthreshold", "80"));
@@ -103,6 +101,9 @@ public class MainActivity extends AppCompatActivity {
                     stopService(MainActivity.this.CheckNoiseServiceIntent);
 
                     recRunning = false;
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.putBoolean("recRunning", recRunning);
+                    editor.commit();
 
                     mainMessage.setVisibility(View.VISIBLE);
 
@@ -114,6 +115,9 @@ public class MainActivity extends AppCompatActivity {
                     startService(CheckNoiseServiceIntent);
 
                     recRunning = true;
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.putBoolean("recRunning", recRunning);
+                    editor.commit();
 
                     mainMessage.setVisibility(View.GONE);
                 }
@@ -134,48 +138,6 @@ public class MainActivity extends AppCompatActivity {
 
         Intent SettingsActivityIntent = new Intent(MainActivity.this, SettingsActivity.class);
         startActivity(SettingsActivityIntent);
-    }
-
-    public void calibrate(View view) {
-
-//        Check if still recording
-
-//        if(recRunning) {
-//            stopService(MainActivity.this.CheckNoiseServiceIntent);
-//            recRunning = false;
-//
-//            mainMessage = (TextView) findViewById(R.id.mainMessage);
-//            mainMessage.setVisibility(View.VISIBLE);
-//        }
-
-        if(!recRunning) {
-
-
-            if (!calibration.isAlive()) {
-                calibration = new Calibration(this);
-                calibration.start();
-            } else {
-                calibration.interrupt();
-                calibration = new Calibration(this);
-                calibration.start();
-            }
-
-//        Wait for calibration to end
-            try {
-                calibration.join();
-            } catch (InterruptedException e) {
-                Log.w("Recording : ", e);
-                return;
-            }
-
-//       Get new zero into MainActivity.this.zero variable
-            SharedPreferences sharedPref = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
-            double defaultZeroValue = 1;
-            MainActivity.this.zero = getPref(sharedPref, "CalibratedZero", defaultZeroValue);
-            MainActivity.this.powZero = getPref(sharedPref, "CalibratedPowZero", defaultZeroValue);
-
-        };
-        return;
     }
 
 //Get Data from CheckNoiseService

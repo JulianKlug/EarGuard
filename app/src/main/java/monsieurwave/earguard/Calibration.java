@@ -16,11 +16,11 @@ import android.util.Log;
 public class Calibration extends Thread {
 
     public AudioRecord audioRecord;
-    public MainActivity context;
+    public CalibrationActivity context;
     public Handler handler;
 
     // Constructor of class (ensures passing on of context from CheckNoiseService to Recording)
-    public Calibration(MainActivity ctx) {
+    public Calibration(CalibrationActivity ctx) {
         context = ctx;
     }
 
