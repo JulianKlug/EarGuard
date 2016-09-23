@@ -77,6 +77,7 @@ public class Recording extends Thread {
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         String calibPref = preferences.getString("calibration_method", "1");
+        double threshold = new Double(preferences.getString("dBthreshold", "80"));
 
         double splValue = 0.0;
         double rmsValue = 0.0;
@@ -189,7 +190,7 @@ public class Recording extends Thread {
                 context.mHandler.sendMessage(msg);
 
 //                Check for too high amplitudes
-                if (dBamplitude > 10) {
+                if (dBamplitude > threshold) {
                     Log.w("Danger !", " Level is over 9000!");
                     boolean notifyMe = preferences.getBoolean("userWarning", false);
                     if (notifyMe) {
