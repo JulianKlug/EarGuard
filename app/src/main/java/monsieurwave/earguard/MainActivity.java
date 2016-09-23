@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -77,6 +78,22 @@ public class MainActivity extends AppCompatActivity {
 
         toggleButton1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                Log.w("THresssj","");
+
+//                    Check if noise threshold is valid
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                try {
+
+                    double threshold = new Double(preferences.getString("dBthreshold", "80"));
+
+                    Log.w("THresssj",Double.toString(threshold));
+                } catch (Exception e){
+                    instantExposure = (TextView) findViewById(R.id.instantExposure);
+                    instantExposure.setText("Invalid Noise threshold");
+                    return;
+                }
+
                 MainActivity.this.CheckNoiseServiceIntent = new Intent(MainActivity.this, CheckNoiseService.class);
                 MainActivity.this.CheckNoiseServiceIntent.putExtra("zero", MainActivity.this.zero);
                 MainActivity.this.CheckNoiseServiceIntent.putExtra("powZero", MainActivity.this.powZero);
@@ -91,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
 
                 } else {
                     // The toggle is actually enabled
+
                     MainActivity.this.CheckNoiseServiceIntent.putExtra("zero", MainActivity.this.zero);
                     MainActivity.this.CheckNoiseServiceIntent.putExtra("powZero", MainActivity.this.powZero);
                     startService(CheckNoiseServiceIntent);
