@@ -3,7 +3,7 @@
     
     <string name="facebook_app_id">1209923379028001</string>
 
-    <string name="calibration">Automatic Calibration.</string>
+    <string name="calibration">Calibrate.</string>
 
     <string name="toggle_turn_on"></string>
     <string name="toggle_turn_off"></string>
