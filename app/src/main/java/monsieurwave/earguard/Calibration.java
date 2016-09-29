@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 public class Calibration extends Thread {
@@ -130,7 +131,7 @@ public class Calibration extends Thread {
         Log.w("meanAmp",Double.toString(meanAmp) + " " + Double.toString(powMeanAmp));
 
 //Save calibrated zero to local
-        SharedPreferences sharedPref = context.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sharedPref.edit();
 
         if (!(sharedMeasure.equals("none"))) {

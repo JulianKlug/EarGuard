@@ -4,8 +4,9 @@
     <string-array name="listentries">
         <item>Manual calibration</item>
         <item>Automatic calibration</item>
-        <item>Experimental Log-fit</item>
-        <item>Experimental trigo-log-fit</item>
+        <item>Basic pre-calibration</item>
+        <item>Pre-calibrated Log-fit</item>
+        <item>Pre-calibrated trigo-log-fit</item>
 
     </string-array>
 
@@ -14,6 +15,7 @@
         <item>2</item>
         <item>3</item>
         <item>4</item>
+        <item>5</item>
 
     </string-array>
 

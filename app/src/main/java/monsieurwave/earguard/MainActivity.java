@@ -54,10 +54,12 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         Log.w("MainActivity", "onStart called");
 
-        SharedPreferences sharedPref = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
         double defaultZeroValue = 1;
         this.zero = getPref(sharedPref, "CalibratedZero", defaultZeroValue);
         this.powZero = getPref(sharedPref, "CalibratedPowZero", defaultZeroValue);
+
+        Log.w("zerooo",Double.toString(this.zero));
     }
 
     @Override

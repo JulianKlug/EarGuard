@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
@@ -91,12 +92,12 @@ public class CalibrationActivity extends Activity {
     }
 
     public void compute (View view) {
-        SharedPreferences sharedPref = CalibrationActivity.this.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences preferences = CalibrationActivity.this.getPreferences(Context.MODE_PRIVATE);
         double defaultValue = 1;
-        final double input1 = getPref(sharedPref, "dBInput1", defaultValue);
-        final double input2 = getPref(sharedPref, "dBInput2", defaultValue);
-        final double measure1 = getPref(sharedPref, "Measure1", defaultValue);
-        final double measure2 = getPref(sharedPref, "Measure2", defaultValue);
+        final double input1 = getPref(preferences, "dBInput1", defaultValue);
+        final double input2 = getPref(preferences, "dBInput2", defaultValue);
+        final double measure1 = getPref(preferences, "Measure1", defaultValue);
+        final double measure2 = getPref(preferences, "Measure2", defaultValue);
         Log.d("M1", Double.toString(measure1));
         Log.d("M2", Double.toString(measure2));
         Log.d("I1", Double.toString(input1));
@@ -107,6 +108,8 @@ public class CalibrationActivity extends Activity {
         double manualZero = input1 - slope * Math.log(measure1);
         Log.d("slope", Double.toString(slope));
         Log.d("manualZero", Double.toString(manualZero));
+
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 
 //        Save coefficients
         SharedPreferences.Editor editor = sharedPref.edit();
