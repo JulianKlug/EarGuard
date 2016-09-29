@@ -38,4 +38,11 @@
         android:summary="Specify noise threshold (in dB) that triggers warning."
         android:defaultValue="80"></EditTextPreference>
 
+    <Preference
+        android:key="calibration"
+        android:title="Calibration"
+        android:summary="Calibrate your application here." >
+        <intent android:action="com.monsieurwave.earguard.activities.CalibrationActivity"/>
+    </Preference>
+
 </PreferenceScreen>

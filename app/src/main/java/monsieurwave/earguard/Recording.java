@@ -99,7 +99,8 @@ public class Recording extends Thread {
 
                 Double dBamplitude;
 
-                if (calibPref.equals("1") ) {
+                if (calibPref.equals("3") ) {
+//                    precalibrated basic
 
                     // creating these variables here so that
                     // the mode change can be handled
@@ -148,11 +149,21 @@ public class Recording extends Thread {
                         amplitude = bufferMax;
                     }
 
-                if (calibPref.equals("3")) {
+                if (calibPref.equals("1")) {
+//                    Fit log with manually calibrated coefficients
+
+                    double slope = Double.longBitsToDouble(preferences.getLong("slope", Double.doubleToLongBits(24.02)));
+                    double manualZero = Double.longBitsToDouble(preferences.getLong("manualZero", Double.doubleToLongBits(-93.14)));
+
+                    Log.w("slope",Double.toString(slope));
+                    Log.w("manZero",Double.toString(manualZero));
+                    dBamplitude = manualZero + slope*Math.log(amplitude);
+
+                } else if (calibPref.equals("4")) {
 //              Fit1 log
                     dBamplitude = -93.14 + 24.02*Math.log(amplitude);
 
-                } else if(calibPref.equals("4")) {
+                } else if(calibPref.equals("5")) {
 //               Fit2 trigo-log
                     double a = -9.197;
                     double b = -0.8016;
@@ -161,7 +172,7 @@ public class Recording extends Thread {
                     dBamplitude = a*(Math.sin(x-Math.PI))+b*Math.pow((x-10),2)+c*(1);
 
                 } else {
-
+//           Automatic calibration
 
                     double powerAmplitude = calculatePowerDb(buffer, 0, nSamples);
                     Log.w("P-Amp: ", Double.toString(powerAmplitude));

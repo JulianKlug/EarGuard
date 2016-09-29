@@ -11,18 +11,31 @@ import android.graphics.Color;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 public class Calibration extends Thread {
 
     public AudioRecord audioRecord;
-    public MainActivity context;
+    public CalibrationActivity context;
+    public String sharedMeasure;
+    public String sharedPowMeasure;
     public Handler handler;
 
     // Constructor of class (ensures passing on of context from CheckNoiseService to Recording)
-    public Calibration(MainActivity ctx) {
+    public Calibration(CalibrationActivity ctx, String SaveTo, String PowSaveto) {
+
         context = ctx;
+        sharedMeasure = SaveTo;
+        sharedPowMeasure = PowSaveto;
+
     }
+
+//    Constructor if no second argument is given
+    public Calibration(CalibrationActivity ctx, String SaveTo) {
+        this (ctx, SaveTo, "none");
+    }
+
 
 //    TODO : Write calibration method
 
@@ -105,7 +118,7 @@ public class Calibration extends Thread {
 
 //                Log.w("number of samples : ", Integer.toString(nSamples));
 //                Log.w("AMPLITUDE: ", Double.toString(amplitude));
-                Log.w("dB: ", Double.toString(powAmplitude));
+                Log.w("dB: ", Double.toString(amplitude));
 //                Log.w("Sum: ", Double.toString(sum));
 
             } catch (InterruptedException e) {
@@ -118,11 +131,15 @@ public class Calibration extends Thread {
         Log.w("meanAmp",Double.toString(meanAmp) + " " + Double.toString(powMeanAmp));
 
 //Save calibrated zero to local
-        SharedPreferences sharedPref = context.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sharedPref.edit();
-//        editor.putInt(getString(R.string.saved_high_score), newHighScore);
-        editor.putLong("CalibratedZero", Double.doubleToRawLongBits(meanAmp));
-        editor.putLong("CalibratedPowZero", Double.doubleToRawLongBits(powMeanAmp));
+
+        if (!(sharedMeasure.equals("none"))) {
+            editor.putLong(sharedMeasure, Double.doubleToRawLongBits(meanAmp));
+        }
+        if (!(sharedPowMeasure.equals("none"))) {
+            editor.putLong(sharedPowMeasure, Double.doubleToRawLongBits(powMeanAmp));
+        }
         editor.commit();
 
 

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Automatic Calibration"
+        android:id="@+id/title"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="50dp"
+        android:elevation="10dp" />
+
+    <Button
+        android:id="@+id/calibActButton"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="@string/calibration"
+        android:onClick="calibrate"
+        android:background="@color/translucent"
+        android:clickable="true"
+        android:textColor="#223185"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_gravity="center_horizontal"
+        android:elevation="0dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Manual Calibration"
+        android:id="@+id/ManualCalibrationTitle"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="30dp" />
+
+    <Button
+        android:id="@+id/Measure1Button"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="Measure 1"
+        android:onClick="measure1"
+        android:background="@color/translucent"
+        android:clickable="true"
+        android:textColor="#223185"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_gravity="center_horizontal"
+        android:elevation="0dp" />
+
+    <Button
+        android:id="@+id/Measure2Button"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="Measure 2"
+        android:onClick="measure2"
+        android:background="@color/translucent"
+        android:clickable="true"
+        android:textColor="#223185"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_gravity="center_horizontal"
+        android:elevation="0dp" />
+
+    <Button
+        android:id="@+id/ComputeButton"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="Compute."
+        android:onClick="compute"
+        android:background="@color/translucent"
+        android:clickable="true"
+        android:textColor="#223185"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_gravity="center_horizontal"
+        android:elevation="0dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text=""
+        android:id="@+id/Function"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="30dp"
+        android:background="@color/translucent"
+        android:textColor="#223185"/>
+
+
+</LinearLayout>
