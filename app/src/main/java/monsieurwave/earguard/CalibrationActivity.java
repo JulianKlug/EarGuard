@@ -93,23 +93,35 @@ public class CalibrationActivity extends Activity {
 
     public void compute (View view) {
         SharedPreferences preferences = CalibrationActivity.this.getPreferences(Context.MODE_PRIVATE);
-        double defaultValue = 1;
-        final double input1 = getPref(preferences, "dBInput1", defaultValue);
-        final double input2 = getPref(preferences, "dBInput2", defaultValue);
-        final double measure1 = getPref(preferences, "Measure1", defaultValue);
-        final double measure2 = getPref(preferences, "Measure2", defaultValue);
+        final double defaultValue = -404;
+        double input1 = getPref(preferences, "dBInput1", defaultValue);
+        double input2 = getPref(preferences, "dBInput2", defaultValue);
+
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(CalibrationActivity.this);
+        double measure1 = getPref(sharedPref, "Measure1", defaultValue);
+        double measure2 = getPref(sharedPref, "Measure2", defaultValue);
+
+        double slope;
+        double manualZero;
+
+        if (input1 == defaultValue || input2 == defaultValue || measure1 == defaultValue || measure2 == defaultValue) { // one of the values has not been correctly read
+
+//            Use default values
+            slope = 24.02;
+            manualZero = -93.14;
+
+        } else {
+//        Compute log equation
+            slope = (input1 - input2) / (Math.log(measure1) - Math.log(measure2));
+            manualZero = input1 - slope * Math.log(measure1);
+        }
+
         Log.d("M1", Double.toString(measure1));
         Log.d("M2", Double.toString(measure2));
         Log.d("I1", Double.toString(input1));
         Log.d("I2", Double.toString(input2));
-
-//        Compute log equation
-        double slope = (input1-input2)/(Math.log(measure1)-Math.log(measure2));
-        double manualZero = input1 - slope * Math.log(measure1);
         Log.d("slope", Double.toString(slope));
         Log.d("manualZero", Double.toString(manualZero));
-
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 
 //        Save coefficients
         SharedPreferences.Editor editor = sharedPref.edit();
